@@ -1,142 +1,79 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using Random = System.Random;
+
 
 public class MazeGenerator
 {
-    private static readonly Random Rand = new Random();
-    private readonly Dictionary<int, List<int>> _graph;
-    private readonly int _size;
-    private Dictionary<int, List<int>> _maze;
-
-    
-    public MazeGenerator(Dictionary<int, List<int>> graph, int size)
+    /// <summary>
+    ///     Design a maze on the given mesh.
+    ///     The only function that the client uses.
+    ///     TODO: Allow the client to specify minimum path length constraint.
+    /// </summary>
+    /// <param name="mesh">Input mesh.</param>
+    /// <param name="algorithm">Algorithm to run.</param>
+    /// <param name="start">Starting cell index.</param>
+    /// <returns>Pairs (2-tuple) of 3D vertices where walls need to be formed.</returns>
+    /// <exception cref="NotImplementedException">
+    ///     The only supported algorithm(s) are: {"DFS"}.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     If <c>start</c> is out of range.
+    /// </exception>
+    public static Tuple<Vector3, Vector3>[] Generate(
+        GeneralMesh mesh,
+        string algorithm = "DFS",
+        int start = 0)
     {
-        _graph = graph;
-        _size = size;
+        var graph = new MeshGraph(mesh);
+
+        if (start < 0 || start >= graph.Size)
+            throw new ArgumentOutOfRangeException();
+        
+        // In-place maze generation via wall removal
+        if (algorithm == "DFS")
+            GenerateDfs(graph, start);
+        else
+            throw new NotImplementedException();
+
+        return graph.WallsToVertexPairs();
     }
 
-    
-    private void Reset()
+
+    /// <summary>
+    ///     Generates a maze on <c>graph</c> by removing the walls in-place
+    ///     using a DFS RECURSIVE BACKTRACKING algorithm.
+    /// </summary>
+    /// <param name="graph">Input MeshGraph.</param>
+    /// <param name="start">Starting cell. Assumed to be in-range.</param>
+    private static void GenerateDfs(MeshGraph graph, int start)
     {
-        _maze = new Dictionary<int, List<int>>();
-    }
-
-    
-    public Dictionary<int, List<int>> Generate(int initialCell)
-    {
-        if (initialCell >= _size)
-            throw new ArgumentException();
-
-        Reset();
-
-        var stack = new Stack<int>();
+        HashSet<int> GetUnvisitedNeighbors(int cell, HashSet<int> visited)
+        {
+            var neighbors = graph.GetNeighboringWalls(cell);
+            neighbors.ExceptWith(visited);
+            return neighbors;
+        }
+        
+        var rand = new Random();
         var visited = new HashSet<int>();
+        var stack = new Stack<int>();
 
-        visited.Add(initialCell);
-        stack.Push(initialCell);
+        visited.Add(start);
+        stack.Push(start);
 
         while (stack.Count > 0)
         {
             var cell = stack.Pop();
-            var neighbors = GetUnvisitedNeighbors(cell, visited);
-            if (neighbors.Count > 0)
-            {
-                stack.Push(cell);
-                var chosenCell = neighbors[Rand.Next(neighbors.Count)];
-                AddPath(cell, chosenCell);
-                visited.Add(chosenCell);
-                stack.Push(chosenCell);
-            }
+            var neighbors = GetUnvisitedNeighbors(cell, visited).ToArray();
+            if (neighbors.Length == 0) continue;    // No neighbors, then skip.
+            stack.Push(cell);
+            var chosenCell = neighbors[rand.Next(neighbors.Length)];
+            graph.RemoveWall(cell, chosenCell);
+            visited.Add(chosenCell);
+            stack.Push(chosenCell);
         }
-
-        return _maze;
     }
-
-
-    private List<int> GetUnvisitedNeighbors(int cell, HashSet<int> visited)
-    {
-        if (cell >= _size) throw new ArgumentException();
-
-        var neighbors = new List<int>();
-        if (!_graph.ContainsKey(cell)) return neighbors;
-        foreach (var neighbor in _graph[cell])
-        {
-            if (!visited.Contains(neighbor))
-                neighbors.Add(neighbor);
-        }
-
-        return neighbors;
-    }
-
-
-    private void AddPath(int start, int end)
-    {
-        if (!_maze.ContainsKey(start))
-            _maze[start] = new List<int>();
-        if (!_maze.ContainsKey(end))
-            _maze[end] = new List<int>();
-
-        _maze[start].Add(end);
-        _maze[start].Add(end);
-    }
-
-
-    public List<int> Solve(int start, int end)
-    {
-        return Solve(_maze, start, end);
-    }
-
-
-    static List<int> Solve(Dictionary<int, List<int>> maze, int start, int end)
-    {
-        var queue = new Queue<int>();
-        var visited = new HashSet<int>();
-        var parentMap = new Dictionary<int, int>();
-
-        queue.Enqueue(start);
-        visited.Add(start);
-
-        while (queue.Count > 0)
-        {
-            var current = queue.Dequeue();
-
-            if (current == end)
-                return ReconstructPath(parentMap, start, end);
-
-            foreach (var neighbor in maze[current])
-            {
-                if (!visited.Contains(neighbor))
-                {
-                    queue.Enqueue(neighbor);
-                    visited.Add(neighbor);
-                    parentMap[neighbor] = current;
-                }
-            }
-        }
-
-        return null; // No path found
-    }
-
-
-    static List<int> ReconstructPath(Dictionary<int, int> parentMap, int start, int end)
-    {
-        var path = new List<int>();
-        var current = end;
-        while (!current.Equals(start))
-        {
-            path.Add(current);
-            current = parentMap[current];
-        }
-
-        path.Add(start);
-        path.Reverse();
-        return path;
-    }
-
-
-    public Dictionary<int, List<int>> GetMaze() { return _maze; }
-
-    public int GetSize() { return _size; }
-
-    public Dictionary<int, List<int>> GetGraph() { return _graph; }
 }
