@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
 
-
-/**
- * TODO: Add more methods.
- */
 public class GeneralMesh
 {
     public readonly Vector3[] vertices;
