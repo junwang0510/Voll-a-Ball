@@ -32,9 +32,5 @@ public class MeshExtractor : MonoBehaviour
 
         // Checks
         Debug.Log($"Wall vertex pairs: {wallVertexPairs.Length}");
-        // foreach (var pair in wallVertexPairs)
-        // {
-        //     Debug.Log($"Wall from {pair.Item1} to {pair.Item2}");
-        // }
     }
 }
