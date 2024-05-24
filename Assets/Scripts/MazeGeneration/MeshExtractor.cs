@@ -24,12 +24,12 @@ public class MeshExtractor : MonoBehaviour
         // Check
         Debug.Log($"Vertices: {vertices.Length}, " +
                   $"Normals: {normals.Length}, " +
-                  $"Primitives (triangles): {primitives.Length / 3}, " +
+                  $"Primitives (triangles): {primitives.Length / nGon}, " +
                   $"nGon: {nGon}");
-
+        
         // Generate wall vertex pairs
         var wallVertexPairs = MazeGenerator.Generate(generalMesh, "DFS", 0);
-
+        
         // Checks
         Debug.Log($"Wall vertex pairs: {wallVertexPairs.Length}");
     }

@@ -36,18 +36,7 @@ public class MeshGraph
                 vPairToCells[vPair].Add(i);
             }
         }
-
-        // BEGIN: DEBUG (Works as expected)
-        // Debug.Log("vPairToCells");
-        // foreach (var (vPair, Cells) in vPairToCells)
-        // {
-        //     Debug.Log($"vPair: ({vPair.First}, {vPair.Second})");
-        //     var msg = "Cells: {";
-        //     foreach (var cell in Cells) msg += cell + " ";
-        //     Debug.Log(msg + "}");
-        // }
-        // END: DEBUG
-
+        
         // Map cell pairs to vertex pairs
         _cPairToVPair = new Dictionary<Pair<int>, Pair<int>>();
         foreach (var (vPair, cellSet) in vPairToCells)
@@ -76,17 +65,6 @@ public class MeshGraph
             _walls[cPair.First].Add(cPair.Second);
             _walls[cPair.Second].Add(cPair.First);
         }
-
-        // BEGIN: DEBUG (Works as expected)
-        // for (var i = 0; i < Size; i++)
-        // {
-        //     Debug.Log($"Cell: {i}");
-        //     var msg = "Neighbors: { ";
-        //     foreach (var wall in _walls[i])
-        //         msg += wall + " ";
-        //     Debug.Log(msg + "}");
-        // }
-        // END: DEBUG
     }
 
     // Replace a wall between two cells with a path
