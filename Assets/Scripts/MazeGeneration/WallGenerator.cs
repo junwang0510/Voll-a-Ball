@@ -14,6 +14,15 @@ public class WallGenerator
         BaseObj = obj;
         MeshFilter meshFilter = BaseObj.GetComponent<MeshFilter>();
         Mesh mesh = meshFilter.mesh;
+        vertices = mesh.vertices;
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            vertices[i] = BaseObj.transform.TransformPoint(vertices[i]);
+        }
+        GeneralMesh generalMesh = new(vertices, mesh.normals, mesh.triangles, 3);
+        wallVerticesPairs = MazeGenerator.Generate(generalMesh);
+        createdVertices = new HashSet<Vector3>();
+        GenerateWallsFromPairs();
 
         // // For debugging purposes
         // vertices = mesh.vertices;
@@ -35,16 +44,6 @@ public class WallGenerator
         // SortVertices();
         // createdVertices = new HashSet<Vector3>();
         // GenerateWalls();
-
-        vertices = mesh.vertices;
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            vertices[i] = BaseObj.transform.TransformPoint(vertices[i]);
-        }
-        GeneralMesh generalMesh = new(vertices, mesh.normals, mesh.triangles, 3);
-        wallVerticesPairs = MazeGenerator.Generate(generalMesh);
-        createdVertices = new HashSet<Vector3>();
-        GenerateWallsFromPairs();
     }
 
     private void GenerateWallsFromPairs()
