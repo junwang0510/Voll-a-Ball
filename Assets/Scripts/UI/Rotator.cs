@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Rotator : MonoBehaviour
 {
-    private float rotationSpeed = 0.2f;
+    private readonly float rotationSpeed = 0.2f;
     private float yaw = 90.0f; // Horizontal rotation
     private float pitch = 70.0f; // Vertical rotation
-    public Vector2 pitchLimits = new Vector2(-89, 89);
+    public readonly Vector2 pitchLimits = new(-89, 89);
 
     void Start()
     {
@@ -88,8 +88,8 @@ public class Rotator : MonoBehaviour
 
                 if (crtlPressed)
                 {
-                    pitchMatrix.SetRow(1, new Vector4(0, Mathf.Cos(pitchRad), -Mathf.Sin(pitchRad), 0));
-                    pitchMatrix.SetRow(2, new Vector4(0, Mathf.Sin(pitchRad), Mathf.Cos(pitchRad), 0));
+                    pitchMatrix.SetRow(1, new Vector4(0, -Mathf.Cos(pitchRad), Mathf.Sin(pitchRad), 0));
+                    pitchMatrix.SetRow(2, new Vector4(0, -Mathf.Sin(pitchRad), -Mathf.Cos(pitchRad), 0));
                 }
                 else
                 {
