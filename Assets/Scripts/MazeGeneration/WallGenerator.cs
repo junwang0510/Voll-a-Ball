@@ -14,41 +14,37 @@ public class WallGenerator
         BaseObj = obj;
         MeshFilter meshFilter = BaseObj.GetComponent<MeshFilter>();
         Mesh mesh = meshFilter.mesh;
-        vertices = mesh.vertices;
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            vertices[i] = BaseObj.transform.TransformPoint(vertices[i]);
-        }
-        normals = mesh.normals;
 
-        // Shuffling the vertices and normals but keeping the pairs
-        System.Random random = new();
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            int randomIndex = random.Next(i, vertices.Length);
-            (vertices[randomIndex], vertices[i]) = (vertices[i], vertices[randomIndex]);
-            (normals[randomIndex], normals[i]) = (normals[i], normals[randomIndex]);
-        }
-
-        SortVertices();
-        createdVertices = new HashSet<Vector3>();
-        GenerateWalls();
-
+        // // For debugging purposes
         // vertices = mesh.vertices;
         // for (int i = 0; i < vertices.Length; i++)
         // {
         //     vertices[i] = BaseObj.transform.TransformPoint(vertices[i]);
         // }
-        // GeneralMesh generalMesh = new(vertices, mesh.normals, mesh.triangles, 3);
-        // wallVerticesPairs = MazeGenerator.Generate(generalMesh);
-        // createdVertices = new HashSet<Vector3>();
-        // GenerateWallsFromPairs();
-    }
+        // normals = mesh.normals;
 
-    private void GenerateWalls()
-    {
-        for (int i = 1; i < vertices.Length; i++)
-            CreateWalls(vertices[i - 1], vertices[i], normals[i - 1], normals[i]);
+        // // Shuffling the vertices and normals but keeping the pairs
+        // System.Random random = new();
+        // for (int i = 0; i < vertices.Length; i++)
+        // {
+        //     int randomIndex = random.Next(i, vertices.Length);
+        //     (vertices[randomIndex], vertices[i]) = (vertices[i], vertices[randomIndex]);
+        //     (normals[randomIndex], normals[i]) = (normals[i], normals[randomIndex]);
+        // }
+
+        // SortVertices();
+        // createdVertices = new HashSet<Vector3>();
+        // GenerateWalls();
+
+        vertices = mesh.vertices;
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            vertices[i] = BaseObj.transform.TransformPoint(vertices[i]);
+        }
+        GeneralMesh generalMesh = new(vertices, mesh.normals, mesh.triangles, 3);
+        wallVerticesPairs = MazeGenerator.Generate(generalMesh);
+        createdVertices = new HashSet<Vector3>();
+        GenerateWallsFromPairs();
     }
 
     private void GenerateWallsFromPairs()
@@ -60,8 +56,8 @@ public class WallGenerator
     private void CreateWalls(Vector3 start, Vector3 end, Vector3 StartN, Vector3 EndN)
     {
         float distance = Vector3.Distance(start, end);
-        if (distance < 0.1f || distance > 0.6f)  // 0.25f is just for my testing case
-            return;
+        // if (distance < 0.1f || distance > 0.6f)  // 0.25f is just for my testing case
+        //     return;
 
         if (ClosestDistance(start) < 0.3f || ClosestDistance(end) < 0.3f)
             return;
@@ -112,6 +108,14 @@ public class WallGenerator
 
         // Set the color of the wall to black
         wall.GetComponent<Renderer>().material = material;
+    }
+
+
+    // For debugging purposes
+    private void GenerateWalls()
+    {
+        for (int i = 1; i < vertices.Length; i++)
+            CreateWalls(vertices[i - 1], vertices[i], normals[i - 1], normals[i]);
     }
 
     private void SortVertices()

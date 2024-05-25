@@ -15,11 +15,11 @@ public class ButtonHandler : MonoBehaviour
     public void OnSphereButtonPressed()
     {
         Instantiate(spherePrefab, pos, Quaternion.identity);
-        Instantiate(ballPrefab, pos + new Vector3(0, 2.625f, 0), Quaternion.identity);
+        GameObject BaseObj = GameObject.Find("Sphere(Clone)");
+        Instantiate(ballPrefab, new Vector3(0, 3.625f, 0), Quaternion.identity, BaseObj.transform);
 
         ToggleCanvasComponents();
 
-        GameObject BaseObj = GameObject.Find("Sphere(Clone)");
         WallGenerator wallGenerator = new();
         wallGenerator.Generate(BaseObj);
 

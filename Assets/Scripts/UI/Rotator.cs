@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Rotator : MonoBehaviour
 {
-    private float rotationSpeed = 0.1f;
+    private float rotationSpeed = 0.2f;
     private float yaw = 90.0f; // Horizontal rotation
     private float pitch = 70.0f; // Vertical rotation
     public Vector2 pitchLimits = new Vector2(-89, 89);
@@ -20,7 +20,7 @@ public class Rotator : MonoBehaviour
         // If user use mobile device
         if (SystemInfo.deviceType != DeviceType.Desktop)
         {
-            if (Input.touchCount > 0)
+            if (Input.touchCount == 1)
             {
                 Touch touch = Input.GetTouch(0);
 
@@ -33,13 +33,30 @@ public class Rotator : MonoBehaviour
                     transform.Rotate(rotationX, rotationY, 0, Space.World);
                 }
             }
+            else if (Input.touchCount == 2)  // View zooming
+            {
+                Touch touch0 = Input.GetTouch(0);
+                Touch touch1 = Input.GetTouch(1);
+
+                Vector2 touch0PrevPos = touch0.position - touch0.deltaPosition;
+                Vector2 touch1PrevPos = touch1.position - touch1.deltaPosition;
+
+                float prevTouchDeltaMag = (touch0PrevPos - touch1PrevPos).magnitude;
+                float touchDeltaMag = (touch0.position - touch1.position).magnitude;
+
+                float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+                Camera.main.fieldOfView += deltaMagnitudeDiff * 0.1f;
+                Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView, 0.1f, 179.9f);
+            }
         }
         else
         {
-            InputSystem();
+            InputSystem();  // Only use for debuging
         }
     }
 
+    // For debugging purposes
     void InputSystem()
     {
         // Input system for PC
