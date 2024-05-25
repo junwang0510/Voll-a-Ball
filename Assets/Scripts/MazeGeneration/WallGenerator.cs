@@ -54,7 +54,7 @@ public class WallGenerator
     private void GenerateWallsFromPairs()
     {
         foreach (Tuple<Vector3, Vector3> pair in wallVerticesPairs)
-            CreateWalls(pair.Item1, pair.Item2, pair.Item1, pair.Item2);
+            CreateWalls(pair.Item1, pair.Item2, pair.Item1 - new Vector3(0, 1, 0), pair.Item2 - new Vector3(0, 1, 0));
     }
 
     private void CreateWalls(Vector3 start, Vector3 end, Vector3 StartN, Vector3 EndN)
