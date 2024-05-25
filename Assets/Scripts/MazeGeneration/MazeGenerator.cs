@@ -31,7 +31,7 @@ public class MazeGenerator
 
         if (start < 0 || start >= graph.Size)
             throw new ArgumentOutOfRangeException();
-        
+
         // In-place maze generation via wall removal
         if (algorithm == "DFS")
             GenerateDfs(graph, start);
@@ -56,8 +56,8 @@ public class MazeGenerator
             neighbors.ExceptWith(visited);
             return neighbors;
         }
-        
-        var rand = new Random();
+
+        var rng = new Random();
         var visited = new HashSet<int>();
         var stack = new Stack<int>();
 
@@ -70,7 +70,7 @@ public class MazeGenerator
             var neighbors = GetUnvisitedNeighbors(cell, visited).ToArray();
             if (neighbors.Length == 0) continue;    // No neighbors, then skip.
             stack.Push(cell);
-            var chosenCell = neighbors[rand.Next(neighbors.Length)];
+            var chosenCell = neighbors[rng.Next(neighbors.Length)];
             graph.RemoveWall(cell, chosenCell);
             visited.Add(chosenCell);
             stack.Push(chosenCell);

@@ -23,7 +23,7 @@ public class MeshGraph
         Vertices = mesh.vertices;
 
         // Initialize a dictionary to store vertex pairs and their corresponding cells
-        var vPairToCells = new Dictionary<Pair<int>, List<int>>();
+        var vPairToCells = new Dictionary<Pair<int>, HashSet<int>>();
         for (var i = 0; i < Size; i++)
         {
             for (var j = 0; j < NGon; j++)
@@ -32,19 +32,22 @@ public class MeshGraph
                 var v = mesh.primitives[i * NGon + ((j + 1) % NGon)];
                 var vPair = new Pair<int>(u, v);
                 if (!vPairToCells.ContainsKey(vPair))
-                    vPairToCells[vPair] = new List<int>();
+                    vPairToCells[vPair] = new HashSet<int>();
                 vPairToCells[vPair].Add(i);
             }
         }
-
+        
         // Map cell pairs to vertex pairs
         _cPairToVPair = new Dictionary<Pair<int>, Pair<int>>();
-        foreach (var item in vPairToCells)
+        foreach (var (vPair, cellSet) in vPairToCells)
         {
-            if (item.Value.Count != 2)
+            // If not an edge, continue.
+            if (cellSet.Count != 2)
                 continue;
-            var cPair = new Pair<int>(item.Value[0], item.Value[1]);
-            _cPairToVPair[cPair] = item.Key;
+
+            var cellList = new List<int>(cellSet);
+            var cPair = new Pair<int>(cellList[0], cellList[1]);
+            _cPairToVPair[cPair] = vPair;
         }
 
         // Initialize paths and walls
@@ -59,10 +62,8 @@ public class MeshGraph
         // Set up walls based on cell pairs
         foreach (var cPair in _cPairToVPair.Keys)
         {
-            var first = cPair.First;
-            var second = cPair.Second;
-            _walls[first].Add(second);
-            _walls[second].Add(first);
+            _walls[cPair.First].Add(cPair.Second);
+            _walls[cPair.Second].Add(cPair.First);
         }
     }
 
@@ -95,7 +96,7 @@ public class MeshGraph
     public Tuple<Vector3, Vector3>[] WallsToVertexPairs()
     {
         var vPairs = new HashSet<Pair<int>>();
-        for (int ci1 = 0; ci1 < Size; ci1++)
+        for (var ci1 = 0; ci1 < Size; ci1++)
         {
             foreach (var ci2 in _walls[ci1])
                 vPairs.Add(_cPairToVPair[new Pair<int>(ci1, ci2)]);
@@ -105,8 +106,7 @@ public class MeshGraph
         var i = 0;
         foreach (var pair in vPairs)
         {
-            var vi1 = pair.First;
-            var vi2 = pair.Second;
+            var vi1 = pair.First; var vi2 = pair.Second;
             res[i] = new Tuple<Vector3, Vector3>(Vertices[vi1], Vertices[vi2]);
             i++;
         }

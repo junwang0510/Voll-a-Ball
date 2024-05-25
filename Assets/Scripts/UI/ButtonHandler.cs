@@ -8,21 +8,26 @@ public class ButtonHandler : MonoBehaviour
 {
     public GameObject spherePrefab;
     public GameObject cubePrefab;
+    public GameObject ballPrefab;
     public Canvas canvas;
     private Vector3 pos = new Vector3(0, 1, 0);
-    private GameObject BaseObj;
-    private Vector3[] vertices, normals;
-    private HashSet<Vector3> createdVertices;
 
     public void OnSphereButtonPressed()
     {
         Instantiate(spherePrefab, pos, Quaternion.identity);
+        GameObject BaseObj = GameObject.Find("Sphere(Clone)");
+        Instantiate(ballPrefab, new Vector3(0, 3.625f, 0), Quaternion.identity, BaseObj.transform);
 
         ToggleCanvasComponents();
 
-        BaseObj = GameObject.Find("Sphere(Clone)");
-        WallGenerator wallGenerator = new WallGenerator();
+        WallGenerator wallGenerator = new();
         wallGenerator.Generate(BaseObj);
+
+        HollowSphere hollowSphere = new();
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        hollowSphere.GenerateHollowSphere(BaseObj, meshFilter, meshRenderer);
+
     }
 
     public void OnCubeButtonPressed()
