@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Generate walls based on wallVertexPairs (class Tuple<Vector3, Vector3>[])
+/// </summary>
 public class WallGenerator
 {
     private GameObject BaseObj;

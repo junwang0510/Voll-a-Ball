@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Class representing a graph structure for a mesh
+/// <summary>
+/// Manage paths and walls between cells in a mesh
+/// </summary>
 public class MeshGraph
 {
     public readonly int Size; // Number of cells in the mesh
@@ -36,7 +38,7 @@ public class MeshGraph
                 vPairToCells[vPair].Add(i);
             }
         }
-        
+
         // Map cell pairs to vertex pairs
         _cPairToVPair = new Dictionary<Pair<int>, Pair<int>>();
         foreach (var (vPair, cellSet) in vPairToCells)

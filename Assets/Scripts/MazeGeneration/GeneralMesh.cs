@@ -4,6 +4,9 @@ using System.Linq;
 using System.Security.Cryptography;
 using UnityEngine;
 
+/// <summary>
+/// Manage vertices, vertex normals, and primitives of a mesh
+/// </summary>
 public class GeneralMesh
 {
     public readonly Vector3[] vertices;
@@ -26,7 +29,7 @@ public class GeneralMesh
         }
 
         // Deduplicate vertices, normals, and primitives.
-        
+
         // Map Vector3 to its first occurring old vertex id.
         var vecToOldVid = new Dictionary<Vector3, int>();
         var oldVidToNewVid = new Dictionary<int, int>();
@@ -46,7 +49,7 @@ public class GeneralMesh
             newVidToOldVid[n] = oldVid;
             n++;
         }
-        
+
         primitives = primitives.ToArray();
         for (var i = 0; i < primitives.Length; i++)
         {
@@ -63,7 +66,7 @@ public class GeneralMesh
             newVertices[newVid] = vertices[oldVid];
             newNormals[newVid] = normals[oldVid];
         }
-        
+
         isDeduplicated = true;
         this.vertices = newVertices;
         this.normals = newNormals;

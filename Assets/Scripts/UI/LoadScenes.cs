@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Load scenes (intro, main, tutorial)
+/// </summary>
 public class LoadScenes : MonoBehaviour
 {
     public string introSceneName = "Intro";

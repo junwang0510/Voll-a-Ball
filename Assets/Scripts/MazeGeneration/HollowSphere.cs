@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Generate a hollow sphere mesh around the base mesh
+/// </summary>
 public class HollowSphere
 {
     private int longitudeSegments;
@@ -32,21 +35,24 @@ public class HollowSphere
         List<Vector3> vertices = new();
         List<int> triangles = new();
 
+        // generate vertices
         for (int i = 0; i <= latitudeSegments; i++)
         {
+            // latitude angles
             float lat = Mathf.PI * i / latitudeSegments;
             float sinLat = Mathf.Sin(lat);
             float cosLat = Mathf.Cos(lat);
 
             for (int j = 0; j <= longitudeSegments; j++)
             {
-                float lon = 2 * Mathf.PI * j / longitudeSegments;
-                vertices.Add(new Vector3(radius * sinLat * Mathf.Cos(lon),
-                                         radius * cosLat,
-                                         radius * sinLat * Mathf.Sin(lon)));
+                float lon = 2 * Mathf.PI * j / longitudeSegments; // longitude angles
+                vertices.Add(new Vector3(radius * sinLat * Mathf.Cos(lon), // X coordinate
+                                         radius * cosLat, // Y coordinate
+                                         radius * sinLat * Mathf.Sin(lon))); // Z coordinate
             }
         }
 
+        // generate triangles
         for (int i = 0; i < latitudeSegments; i++)
         {
             for (int j = 0; j < longitudeSegments; j++)
@@ -56,6 +62,7 @@ public class HollowSphere
 
                 if (invert)
                 {
+                    // inverted triangles for inner mesh
                     triangles.Add(current);
                     triangles.Add(next + 1);
                     triangles.Add(next);
@@ -66,6 +73,7 @@ public class HollowSphere
                 }
                 else
                 {
+                    // normal triangles for outer mesh
                     triangles.Add(current);
                     triangles.Add(next);
                     triangles.Add(next + 1);
