@@ -11,6 +11,7 @@ public class WallGenerator
     private Vector3[] vertices, normals;
     private Tuple<Vector3, Vector3>[] wallVerticesPairs;
     private HashSet<Vector3> createdVertices;
+    private bool redCylinderCreated = false;
 
     public void Generate(GameObject obj)
     {
@@ -94,8 +95,17 @@ public class WallGenerator
             cylinder.transform.Rotate(90, 0, 0);
             cylinder.transform.parent = BaseObj.transform;
 
-            // Set the color of the cylinder to black
-            cylinder.GetComponent<Renderer>().material = material;
+            // Randomly set one and only one cylinder to red (rest = black)
+            if (!redCylinderCreated && UnityEngine.Random.Range(0, 10) == 0)
+            {
+                cylinder.GetComponent<Renderer>().material.color = Color.red;
+                cylinder.tag = "RedCylinder";
+                redCylinderCreated = true;
+            }
+            else
+            {
+                cylinder.GetComponent<Renderer>().material = material;
+            }
 
             createdVertices.Add(end);
         }

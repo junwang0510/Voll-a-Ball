@@ -20,7 +20,8 @@ public class ButtonHandler : MonoBehaviour
         // Generate the sphere and the ball
         Instantiate(spherePrefab, initPos, Quaternion.identity);
         GameObject BaseObj = GameObject.Find("Sphere(Clone)");
-        Instantiate(ballPrefab, new Vector3(0, 3.625f, 0), Quaternion.identity, BaseObj.transform);
+        Instantiate(ballPrefab, new Vector3(0, 3.625f, 0), Quaternion.identity, BaseObj.transform); // ball on the top of sphere
+        // Instantiate(ballPrefab, new Vector3(0, 1f, -2f), Quaternion.identity, BaseObj.transform); // ball on the side of sphere
 
         ToggleCanvasComponents();
 

@@ -71,7 +71,7 @@ public class Rotator : MonoBehaviour
     {
         var moveHorizontal = Input.GetAxis("Horizontal");
         var moveVertical = Input.GetAxis("Vertical");
-        var crtlPressed = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+        var pitchKeyPressed = Input.GetKey(KeyCode.Q);
 
         if (moveHorizontal != 0 || moveVertical != 0)
         {
@@ -92,7 +92,7 @@ public class Rotator : MonoBehaviour
             pitchMatrix.SetRow(0, new Vector4(1, 0, 0, 0));
             pitchMatrix.SetRow(3, new Vector4(0, 0, 0, 1));
 
-            if (crtlPressed)
+            if (pitchKeyPressed)
             {
                 pitchMatrix.SetRow(1, new Vector4(0, -Mathf.Cos(pitchRad), Mathf.Sin(pitchRad), 0));
                 pitchMatrix.SetRow(2, new Vector4(0, -Mathf.Sin(pitchRad), -Mathf.Cos(pitchRad), 0));
