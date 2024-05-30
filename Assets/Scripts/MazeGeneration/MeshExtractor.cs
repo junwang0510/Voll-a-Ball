@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Extract vertices, normals, and primitives from a mesh
+/// </summary>
 public class MeshExtractor : MonoBehaviour
 {
     private void OnEnable()
@@ -21,16 +24,14 @@ public class MeshExtractor : MonoBehaviour
         int nGon = 3;
         GeneralMesh generalMesh = new GeneralMesh(vertices, normals, primitives, nGon);
 
-        // Check
+        // Generate wall vertex pairs
+        var wallVertexPairs = MazeGenerator.Generate(generalMesh, "DFS", 0);
+
+        // Checks
         Debug.Log($"Vertices: {vertices.Length}, " +
                   $"Normals: {normals.Length}, " +
                   $"Primitives (triangles): {primitives.Length / nGon}, " +
                   $"nGon: {nGon}");
-        
-        // Generate wall vertex pairs
-        var wallVertexPairs = MazeGenerator.Generate(generalMesh, "DFS", 0);
-        
-        // Checks
         Debug.Log($"Wall vertex pairs: {wallVertexPairs.Length}");
     }
 }

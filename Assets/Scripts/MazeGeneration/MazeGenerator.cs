@@ -4,7 +4,11 @@ using System.Linq;
 using UnityEngine;
 using Random = System.Random;
 
-
+/// <summary>
+/// Generate a maze on the given mesh using DFS.
+/// Input: mesh (class GeneralMesh)
+/// Output: pairs (2-tuple) of 3D vertices where walls need to be formed
+/// </summary>
 public class MazeGenerator
 {
     /// <summary>
