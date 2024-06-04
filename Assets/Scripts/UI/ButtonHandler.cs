@@ -11,6 +11,7 @@ public class ButtonHandler : MonoBehaviour
 {
     public GameObject spherePrefab;
     public GameObject ellipsoidePrefab;
+    public GameObject cubePrefab;
     public GameObject ballPrefab;
     public Canvas canvas;
     private Timer timer; // Reference to the Timer script
@@ -50,12 +51,13 @@ public class ButtonHandler : MonoBehaviour
         hollowSphere.GenerateHollowSphere(BaseObj, meshFilter, meshRenderer);
     }
 
-    public void OnEllipsoidButtonPressed()
+    public void OnCubeButtonPressed()
     {
-
         ToggleCanvasComponents();
-        Instantiate(ellipsoidePrefab, initPos, Quaternion.identity);
-        GameObject BaseObj = GameObject.Find("Ellipsoid(Clone)");
+        Instantiate(cubePrefab, initPos, Quaternion.identity);
+        GameObject BaseObj = GameObject.Find("Cube(Clone)");
+        CubeMeshGenerator generator = BaseObj.AddComponent<CubeMeshGenerator>();
+        generator.GenerateMesh(BaseObj);
 
         // Start the timer
         timer.StartTimer();
@@ -64,20 +66,16 @@ public class ButtonHandler : MonoBehaviour
         WallGenerator wallGenerator = new();
         wallGenerator.Generate(BaseObj);
 
-        Vector3 scale = BaseObj.transform.localScale;
-
-        // Generate a transparent shell around the sphere
-        HollowSphere hollowSphere = new();
-        hollowSphere.SetScale(scale / 5);
+        // Generate a transparent shell around the Cube
+        HollowCube hollowCube = new();
         MeshFilter meshFilter = GetComponent<MeshFilter>();
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
-        hollowSphere.GenerateHollowSphere(BaseObj, meshFilter, meshRenderer, BaseObj);
+        hollowCube.GenerateHollowCube(BaseObj, meshFilter, meshRenderer, BaseObj);
 
-        BaseObj.transform.rotation = Quaternion.Euler(0, 0, 90);
-        MeshCollider sphereCollider = BaseObj.GetComponent<MeshCollider>();
-        // Scale the collider
-        sphereCollider.transform.localScale = scale;
-        Instantiate(ballPrefab, new Vector3(0, 3.625f, 0), Quaternion.identity, BaseObj.transform); // ball on the top of sphere
+        Instantiate(ballPrefab, new Vector3(0.125f, 2.15f, 0.125f), Quaternion.identity, BaseObj.transform); // ball on the top of sphere
+        GameObject ball = GameObject.Find("Ball(Clone)");
+        // Scale the ball
+        ball.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
     }
 
     private void ToggleCanvasComponents()

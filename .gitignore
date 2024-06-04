@@ -75,3 +75,7 @@ crashlytics-build.properties
 .idea/
 .vscode/
 .DS_Store
+
+# Project specific ignoring files
+/[Aa]ssets/PlayerHistory.txt
+/[Aa]ssets/PlayerHistory.txt.meta
