@@ -12,18 +12,43 @@ public class WallGenerator
     private Tuple<Vector3, Vector3>[] wallVerticesPairs;
     private HashSet<Vector3> createdVertices;
     private bool redCylinderCreated = false;
+    private Dictionary<Vector3, Vector3> vertexToNormal = new();
 
     public void Generate(GameObject obj)
     {
         BaseObj = obj;
         MeshFilter meshFilter = BaseObj.GetComponent<MeshFilter>();
         Mesh mesh = meshFilter.mesh;
+
+        // Get the scale of the object
+        Vector3 scale = BaseObj.transform.localScale;
+
+        // Scale the normals
+        normals = mesh.normals;
+        for (int i = 0; i < normals.Length; i++)
+        {
+            normals[i] = new Vector3(normals[i].x / Mathf.Pow(scale.x, 2), normals[i].y / Mathf.Pow(scale.y, 2), normals[i].z / Mathf.Pow(scale.z, 2));
+        }
+
+        // Scale the vertices
         vertices = mesh.vertices;
+        // for (int i = 0; i < vertices.Length; i++)
+        // {
+        //     vertices[i] = new Vector3(vertices[i].x * 2.0f, vertices[i].y * 2.0f, vertices[i].z * 2.0f);
+        // }
+
         for (int i = 0; i < vertices.Length; i++)
         {
             vertices[i] = BaseObj.transform.TransformPoint(vertices[i]);
         }
-        GeneralMesh generalMesh = new(vertices, mesh.normals, mesh.triangles, 3);
+
+        // Put the vertices and normals in vertexToNormal dictionary
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            vertexToNormal[vertices[i]] = normals[i];
+        }
+
+        GeneralMesh generalMesh = new(vertices, normals, mesh.triangles, 3);
         wallVerticesPairs = MazeGenerator.Generate(generalMesh);
         createdVertices = new HashSet<Vector3>();
         GenerateWallsFromPairs();
@@ -53,7 +78,7 @@ public class WallGenerator
     private void GenerateWallsFromPairs()
     {
         foreach (Tuple<Vector3, Vector3> pair in wallVerticesPairs)
-            CreateWalls(pair.Item1, pair.Item2, pair.Item1 - new Vector3(0, 1, 0), pair.Item2 - new Vector3(0, 1, 0));
+            CreateWalls(pair.Item1, pair.Item2, vertexToNormal[pair.Item1], vertexToNormal[pair.Item2]);
     }
 
     private void CreateWalls(Vector3 start, Vector3 end, Vector3 StartN, Vector3 EndN)
@@ -113,9 +138,12 @@ public class WallGenerator
         Vector3 center = (start + end) / 2;
         GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
         wall.transform.position = center;
-        wall.transform.localScale = new Vector3(0.1f, 0.5f, distance * 1.1f);
+        wall.transform.localScale = new Vector3(0.1f, 0.5f, distance);
+        // wall.transform.localScale = new Vector3(0.1f, 0.5f, 0.5f);
+        // Vector3 direction = StartN + EndN;
+        // Vector3 normal = Vector3.Cross(direction, StartN + EndN);
 
-        wall.transform.rotation = Quaternion.LookRotation(end - start, (StartN + EndN) / 2);
+        wall.transform.rotation = Quaternion.LookRotation(end - start, StartN + EndN);
         wall.transform.parent = BaseObj.transform;
 
         // Set the color of the wall to black

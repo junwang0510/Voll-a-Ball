@@ -8,11 +8,17 @@ public class HollowSphere
 {
     private int longitudeSegments;
     private int latitudeSegments;
+    private Vector3 scale = Vector3.one;
 
-    public void GenerateHollowSphere(GameObject BaseObj, MeshFilter meshFilter, MeshRenderer meshRenderer)
+    public void SetScale(Vector3 scale)
+    {
+        this.scale = scale;
+    }
+
+    public void GenerateHollowSphere(GameObject BaseObj, MeshFilter meshFilter, MeshRenderer meshRenderer, GameObject parent = null)
     {
         float outerRadius = 2.825f;
-        float thickness = 2.0f;
+        float thickness = 2.5f;
         longitudeSegments = 64;
         latitudeSegments = 64;
 
@@ -26,6 +32,15 @@ public class HollowSphere
         AddMeshCollider(innerMesh, true, meshFilter.transform);
 
         meshFilter.transform.position = BaseObj.transform.position;
+
+        // Scale the mesh
+        meshFilter.transform.localScale = scale;
+
+        // Set the parent
+        if (parent != null)
+        {
+            meshFilter.transform.SetParent(parent.transform);
+        }
     }
 
     private Mesh GenerateSphereMesh(float radius, bool invert = false)

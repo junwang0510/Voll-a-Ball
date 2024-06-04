@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class ButtonHandler : MonoBehaviour
 {
     public GameObject spherePrefab;
-    public GameObject cubePrefab;
+    public GameObject ellipsoidePrefab;
     public GameObject ballPrefab;
     public Canvas canvas;
     private Timer timer; // Reference to the Timer script
@@ -50,10 +50,34 @@ public class ButtonHandler : MonoBehaviour
         hollowSphere.GenerateHollowSphere(BaseObj, meshFilter, meshRenderer);
     }
 
-    public void OnCubeButtonPressed()
+    public void OnEllipsoidButtonPressed()
     {
-        Instantiate(cubePrefab, initPos, Quaternion.identity);
+
         ToggleCanvasComponents();
+        Instantiate(ellipsoidePrefab, initPos, Quaternion.identity);
+        GameObject BaseObj = GameObject.Find("Ellipsoid(Clone)");
+
+        // Start the timer
+        timer.StartTimer();
+
+        // Generate walls
+        WallGenerator wallGenerator = new();
+        wallGenerator.Generate(BaseObj);
+
+        Vector3 scale = BaseObj.transform.localScale;
+
+        // Generate a transparent shell around the sphere
+        HollowSphere hollowSphere = new();
+        hollowSphere.SetScale(scale / 5);
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        hollowSphere.GenerateHollowSphere(BaseObj, meshFilter, meshRenderer, BaseObj);
+
+        BaseObj.transform.rotation = Quaternion.Euler(0, 0, 90);
+        MeshCollider sphereCollider = BaseObj.GetComponent<MeshCollider>();
+        // Scale the collider
+        sphereCollider.transform.localScale = scale;
+        Instantiate(ballPrefab, new Vector3(0, 3.625f, 0), Quaternion.identity, BaseObj.transform); // ball on the top of sphere
     }
 
     private void ToggleCanvasComponents()

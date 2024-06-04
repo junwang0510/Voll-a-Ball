@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731704, g: 0.1341472, b: 0.121078566, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1817,7 +1817,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1426759573}
         m_TargetAssemblyTypeName: ButtonHandler, Assembly-CSharp
-        m_MethodName: OnCubeButtonPressed
+        m_MethodName: OnEllipsoidButtonPressed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2190,7 +2190,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Cube
+  m_text: Ellipsoid
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2299,7 +2299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spherePrefab: {fileID: 5309060068550301245, guid: 3de2bf9969d494404af4b8993b558b81, type: 3}
-  cubePrefab: {fileID: 4424518765605209869, guid: e26fae9d428974a36a0de6c1e2afe6da, type: 3}
+  ellipsoidePrefab: {fileID: 4424518765605209869, guid: 4761d7d2416efac4f9331e294fe4c3b4, type: 3}
   ballPrefab: {fileID: 8161164979407602150, guid: 58098d40b54c9ac4f8fa75d902c43b29, type: 3}
   canvas: {fileID: 235688154}
 --- !u!4 &1426759574
