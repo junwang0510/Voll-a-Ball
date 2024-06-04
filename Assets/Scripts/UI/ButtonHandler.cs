@@ -13,7 +13,18 @@ public class ButtonHandler : MonoBehaviour
     public GameObject cubePrefab;
     public GameObject ballPrefab;
     public Canvas canvas;
+    private Timer timer; // Reference to the Timer script
     private Vector3 initPos = new Vector3(0, 1, 0);
+
+    private void Start()
+    {
+        // Ensure the Timer is initialized
+        timer = FindObjectOfType<Timer>();
+        if (timer == null)
+        {
+            Debug.LogError("Timer script not found!");
+        }
+    }
 
     public void OnSphereButtonPressed()
     {
@@ -24,6 +35,9 @@ public class ButtonHandler : MonoBehaviour
         // Instantiate(ballPrefab, new Vector3(0, 1f, -2f), Quaternion.identity, BaseObj.transform); // ball on the side of sphere
 
         ToggleCanvasComponents();
+
+        // Start the timer
+        timer.StartTimer();
 
         // Generate walls
         WallGenerator wallGenerator = new();
