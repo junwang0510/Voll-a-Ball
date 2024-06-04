@@ -1,12 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-/// <summary>
-/// Rotate a mesh based on user input from mobile devices and desktop.
-/// Mobile device: one finger for rotation
-/// Desktop: arrow keys or WASD for rotation, control key for pitch adjustment.
-/// </summary>
 public class Rotator : MonoBehaviour
 {
     private readonly float rotationSpeed = 0.2f;
@@ -14,10 +10,31 @@ public class Rotator : MonoBehaviour
     private float pitch = 70.0f; // Vertical rotation
     public readonly Vector2 pitchLimits = new(-89, 89);
 
+    private Button qButton;
+    private Button leftButton;
+    private Button rightButton;
+    private Button upButton;
+    private Button downButton;
+
     void Start()
     {
         yaw = transform.eulerAngles.x + 90.0f;
         pitch = transform.eulerAngles.y;
+
+        qButton = GameObject.Find("QButton").GetComponent<Button>();
+        leftButton = GameObject.Find("LeftButton").GetComponent<Button>();
+        rightButton = GameObject.Find("RightButton").GetComponent<Button>();
+        upButton = GameObject.Find("UpButton").GetComponent<Button>();
+        downButton = GameObject.Find("DownButton").GetComponent<Button>();
+
+        if (SystemInfo.deviceType == DeviceType.Desktop)
+        {
+            HideMobileButtons();
+        }
+        else
+        {
+            ShowMobileButtons();
+        }
     }
 
     void Update()
@@ -49,22 +66,13 @@ public class Rotator : MonoBehaviour
                 transform.Rotate(rotationX, rotationY, 0, Space.World);
             }
         }
-        // else if (Input.touchCount == 2)  // two fingers for zooming
-        // {
-        //     Touch touch0 = Input.GetTouch(0);
-        //     Touch touch1 = Input.GetTouch(1);
 
-        //     Vector2 touch0PrevPos = touch0.position - touch0.deltaPosition;
-        //     Vector2 touch1PrevPos = touch1.position - touch1.deltaPosition;
-
-        //     float prevTouchDeltaMag = (touch0PrevPos - touch1PrevPos).magnitude;
-        //     float touchDeltaMag = (touch0.position - touch1.position).magnitude;
-
-        //     float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
-
-        //     Camera.main.fieldOfView += deltaMagnitudeDiff * 0.1f;
-        //     Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView, 0.1f, 179.9f);
-        // }
+        // // (Unfinished) Handle button input for mobile
+        // qButton.onClick.AddListener(() => MoveSphere(KeyCode.Q));
+        // leftButton.onClick.AddListener(() => MoveSphere(KeyCode.LeftArrow));
+        // rightButton.onClick.AddListener(() => MoveSphere(KeyCode.RightArrow));
+        // upButton.onClick.AddListener(() => MoveSphere(KeyCode.UpArrow));
+        // downButton.onClick.AddListener(() => MoveSphere(KeyCode.DownArrow));
     }
 
     void HandleDesktopInput()
@@ -75,38 +83,90 @@ public class Rotator : MonoBehaviour
 
         if (moveHorizontal != 0 || moveVertical != 0)
         {
-            var movement = new Vector4(moveVertical, 0.0f, moveHorizontal, 0.0f);
-
-            float yawRad = (yaw - 90) * Mathf.Deg2Rad;
-            float pitchRad = pitch * Mathf.Deg2Rad;
-
-            // Rotation matrix corresponding to the yawRad
-            Matrix4x4 yawMatrix = new Matrix4x4();
-            yawMatrix.SetRow(0, new Vector4(Mathf.Cos(yawRad), 0, -Mathf.Sin(yawRad), 0));
-            yawMatrix.SetRow(1, new Vector4(0, 1, 0, 0));
-            yawMatrix.SetRow(2, new Vector4(Mathf.Sin(yawRad), 0, Mathf.Cos(yawRad), 0));
-            yawMatrix.SetRow(3, new Vector4(0, 0, 0, 1));
-
-            // Rotation matrix corresponding to the pitchRad
-            Matrix4x4 pitchMatrix = new Matrix4x4();
-            pitchMatrix.SetRow(0, new Vector4(1, 0, 0, 0));
-            pitchMatrix.SetRow(3, new Vector4(0, 0, 0, 1));
-
-            if (pitchKeyPressed)
-            {
-                pitchMatrix.SetRow(1, new Vector4(0, -Mathf.Cos(pitchRad), Mathf.Sin(pitchRad), 0));
-                pitchMatrix.SetRow(2, new Vector4(0, -Mathf.Sin(pitchRad), -Mathf.Cos(pitchRad), 0));
-            }
-            else
-            {
-                pitchMatrix.SetRow(1, new Vector4(0, Mathf.Sin(pitchRad), -Mathf.Cos(pitchRad), 0));
-                pitchMatrix.SetRow(2, new Vector4(0, Mathf.Cos(pitchRad), Mathf.Sin(pitchRad), 0));
-            }
-
-            Matrix4x4 combinedMatrix = yawMatrix * pitchMatrix;
-            Vector4 rotatedMovement = combinedMatrix * movement;
-            Vector3 rotatedMovement3 = new Vector3(rotatedMovement.x, rotatedMovement.y, rotatedMovement.z) * rotationSpeed;
-            transform.Rotate(rotatedMovement3, Space.World);
+            MoveSphere(moveHorizontal, moveVertical, pitchKeyPressed);
         }
+    }
+
+    // // (Unfinished)
+    // void MoveSphere(KeyCode key)
+    // {
+    //     float moveHorizontal = 0;
+    //     float moveVertical = 0;
+    //     bool pitchKeyPressed = false;
+
+    //     switch (key)
+    //     {
+    //         case KeyCode.Q:
+    //             pitchKeyPressed = true;
+    //             break;
+    //         case KeyCode.LeftArrow:
+    //             moveHorizontal = -1;
+    //             break;
+    //         case KeyCode.RightArrow:
+    //             moveHorizontal = 1;
+    //             break;
+    //         case KeyCode.UpArrow:
+    //             moveVertical = 1;
+    //             break;
+    //         case KeyCode.DownArrow:
+    //             moveVertical = -1;
+    //             break;
+    //     }
+
+    //     MoveSphere(moveHorizontal, moveVertical, pitchKeyPressed);
+    // }
+
+    void MoveSphere(float moveHorizontal, float moveVertical, bool pitchKeyPressed)
+    {
+        var movement = new Vector4(moveVertical, 0.0f, moveHorizontal, 0.0f);
+
+        float yawRad = (yaw - 90) * Mathf.Deg2Rad;
+        float pitchRad = pitch * Mathf.Deg2Rad;
+
+        // Rotation matrix corresponding to the yawRad
+        Matrix4x4 yawMatrix = new Matrix4x4();
+        yawMatrix.SetRow(0, new Vector4(Mathf.Cos(yawRad), 0, -Mathf.Sin(yawRad), 0));
+        yawMatrix.SetRow(1, new Vector4(0, 1, 0, 0));
+        yawMatrix.SetRow(2, new Vector4(Mathf.Sin(yawRad), 0, Mathf.Cos(yawRad), 0));
+        yawMatrix.SetRow(3, new Vector4(0, 0, 0, 1));
+
+        // Rotation matrix corresponding to the pitchRad
+        Matrix4x4 pitchMatrix = new Matrix4x4();
+        pitchMatrix.SetRow(0, new Vector4(1, 0, 0, 0));
+        pitchMatrix.SetRow(3, new Vector4(0, 0, 0, 1));
+
+        if (pitchKeyPressed)
+        {
+            pitchMatrix.SetRow(1, new Vector4(0, -Mathf.Cos(pitchRad), Mathf.Sin(pitchRad), 0));
+            pitchMatrix.SetRow(2, new Vector4(0, -Mathf.Sin(pitchRad), -Mathf.Cos(pitchRad), 0));
+        }
+        else
+        {
+            pitchMatrix.SetRow(1, new Vector4(0, Mathf.Sin(pitchRad), -Mathf.Cos(pitchRad), 0));
+            pitchMatrix.SetRow(2, new Vector4(0, Mathf.Cos(pitchRad), Mathf.Sin(pitchRad), 0));
+        }
+
+        Matrix4x4 combinedMatrix = yawMatrix * pitchMatrix;
+        Vector4 rotatedMovement = combinedMatrix * movement;
+        Vector3 rotatedMovement3 = new Vector3(rotatedMovement.x, rotatedMovement.y, rotatedMovement.z) * rotationSpeed;
+        transform.Rotate(rotatedMovement3, Space.World);
+    }
+
+    void HideMobileButtons()
+    {
+        qButton.gameObject.SetActive(false);
+        leftButton.gameObject.SetActive(false);
+        rightButton.gameObject.SetActive(false);
+        upButton.gameObject.SetActive(false);
+        downButton.gameObject.SetActive(false);
+    }
+
+    void ShowMobileButtons()
+    {
+        qButton.gameObject.SetActive(true);
+        leftButton.gameObject.SetActive(true);
+        rightButton.gameObject.SetActive(true);
+        upButton.gameObject.SetActive(true);
+        downButton.gameObject.SetActive(true);
     }
 }
