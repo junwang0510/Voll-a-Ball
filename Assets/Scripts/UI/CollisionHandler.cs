@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Load the end scene when the ball reaches the end (i.e. collide with the red cylinder)
-/// </summary>
 public class CollisionHandler : MonoBehaviour
 {
     private LoadScenes loadScenesScript;

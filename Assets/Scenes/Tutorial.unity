@@ -307,7 +307,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 475}
+  m_AnchoredPosition: {x: 0, y: 505}
   m_SizeDelta: {x: 1400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1244285384
@@ -330,30 +330,15 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Instructions:
-
-    1.  The player can choose from a list of predefined
-    3D mesh (i.e. sphere, cube) for maze generation.
-
-
-    2. The player can inspect
-    the randomly generated maze from different angles by rotating the mesh (arrow
-    keys for movement and pressing the Q key simultaneously will rotate the object
-    around the X-axis in the opposite direction compared to the default rotation
-    behavior.)
-
-
-    3. The ball is spawned in the center of the top of the maze
-    by default. After the player collects one collectible, the goal will be revealed
-    (marked by a red cylinder).
-
-
-    4. The player navigates the ball to the goal
-    by rotating the mesh.
-
-
-    5. The time taken for this attempt and the best time
-    will be displayed to the user after the game.'
+  m_text: "Instructions:\n1.  The player can choose from a list of predefined 3D
+    mesh (i.e. sphere, cube) for maze generation.\n\n2. The player can inspect the
+    randomly generated maze from different angles by rotating the mesh. \narrow keys:
+    horizontal/vertical rotation\nQ key: pitch rotation\n\n3. The ball is spawned
+    in the center of the top of the maze by default. Three collectibles will be randomly
+    generated around the surface of the mesh. After the player collects one collectible,
+    a randomly chosen goal will be revealed (marked by a red cylinder).\n\n4. The
+    player navigates the ball to the goal by rotating the mesh.\n\n5. The time taken
+    for this attempt and the best time will be displayed to the user after the game."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
