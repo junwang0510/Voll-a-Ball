@@ -52,27 +52,6 @@ public class WallGenerator
         wallVerticesPairs = MazeGenerator.Generate(generalMesh);
         createdVertices = new HashSet<Vector3>();
         GenerateWallsFromPairs();
-
-        // // For debugging purposes
-        // vertices = mesh.vertices;
-        // for (int i = 0; i < vertices.Length; i++)
-        // {
-        //     vertices[i] = BaseObj.transform.TransformPoint(vertices[i]);
-        // }
-        // normals = mesh.normals;
-
-        // // Shuffling the vertices and normals but keeping the pairs
-        // System.Random random = new();
-        // for (int i = 0; i < vertices.Length; i++)
-        // {
-        //     int randomIndex = random.Next(i, vertices.Length);
-        //     (vertices[randomIndex], vertices[i]) = (vertices[i], vertices[randomIndex]);
-        //     (normals[randomIndex], normals[i]) = (normals[i], normals[randomIndex]);
-        // }
-
-        // SortVertices();
-        // createdVertices = new HashSet<Vector3>();
-        // GenerateWalls();
     }
 
     private void GenerateWallsFromPairs()
@@ -139,65 +118,15 @@ public class WallGenerator
         GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
         wall.transform.position = center;
         wall.transform.localScale = new Vector3(0.1f, 0.5f, distance);
-        // wall.transform.localScale = new Vector3(0.1f, 0.5f, 0.5f);
-        // Vector3 direction = StartN + EndN;
-        // Vector3 normal = Vector3.Cross(direction, StartN + EndN);
+        Vector3 direction = end - start;
+        Vector3 right = Vector3.Cross(direction, StartN + EndN);
+        Vector3 upward = Vector3.Cross(right, direction);
 
-        wall.transform.rotation = Quaternion.LookRotation(end - start, StartN + EndN);
+        wall.transform.rotation = Quaternion.LookRotation(direction, upward);
         wall.transform.parent = BaseObj.transform;
 
         // Set the color of the wall to black
         wall.GetComponent<Renderer>().material = material;
-    }
-
-
-    // For debugging purposes
-    private void GenerateWalls()
-    {
-        for (int i = 1; i < vertices.Length; i++)
-            CreateWalls(vertices[i - 1], vertices[i], normals[i - 1], normals[i]);
-    }
-
-    private void SortVertices()
-    {
-        if (vertices == null || vertices.Length == 0 || normals == null || normals.Length != vertices.Length)
-            return;
-
-        List<Vector3> sortedVertices = new();
-        List<Vector3> sortedNormals = new();
-        HashSet<int> visitedIndices = new();
-
-        int currentIndex = 0;
-        sortedVertices.Add(vertices[currentIndex]);
-        sortedNormals.Add(normals[currentIndex]);
-        visitedIndices.Add(currentIndex);
-
-        while (sortedVertices.Count < vertices.Length)
-        {
-            float closestDistance = float.MaxValue;
-            int closestIndex = -1;
-
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                if (visitedIndices.Contains(i))
-                    continue;
-
-                float distance = Vector3.Distance(vertices[currentIndex], vertices[i]);
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    closestIndex = i;
-                }
-            }
-
-            currentIndex = closestIndex;
-            sortedVertices.Add(vertices[currentIndex]);
-            sortedNormals.Add(normals[currentIndex]);
-            visitedIndices.Add(currentIndex);
-        }
-
-        vertices = sortedVertices.ToArray();
-        normals = sortedNormals.ToArray();
     }
 
     private float ClosestDistance(Vector3 curr)
