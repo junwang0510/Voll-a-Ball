@@ -2302,6 +2302,7 @@ MonoBehaviour:
   ellipsoidePrefab: {fileID: 4424518765605209869, guid: 4761d7d2416efac4f9331e294fe4c3b4, type: 3}
   cubePrefab: {fileID: 4424518765605209869, guid: e26fae9d428974a36a0de6c1e2afe6da, type: 3}
   ballPrefab: {fileID: 8161164979407602150, guid: 58098d40b54c9ac4f8fa75d902c43b29, type: 3}
+  CollectablePrefab: {fileID: 3943563103260244929, guid: 549093c225d801d4c989c5f79674998e, type: 3}
   canvas: {fileID: 235688154}
 --- !u!4 &1426759574
 Transform:

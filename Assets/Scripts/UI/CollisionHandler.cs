@@ -9,15 +9,19 @@ using UnityEngine.SceneManagement;
 public class CollisionHandler : MonoBehaviour
 {
     private LoadScenes loadScenesScript;
+    private GameObject endCylinder = null;
+    private readonly int NUM_COLLECTABLES = 1;
+    private int collected;
 
     void Start()
     {
         loadScenesScript = FindObjectOfType<LoadScenes>();
+        collected = 0;
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("RedCylinder"))
+        if (collision.gameObject.CompareTag("RedCylinder") && collected == NUM_COLLECTABLES)
         {
             if (loadScenesScript != null)
             {
@@ -27,6 +31,32 @@ public class CollisionHandler : MonoBehaviour
             {
                 Debug.LogError("LoadScenes script not found!");
             }
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Collectable"))
+        {
+            other.gameObject.SetActive(false);
+            collected++;
+        }
+
+        if (collected == NUM_COLLECTABLES)
+        {
+            endCylinder.GetComponent<Renderer>().material.color = Color.red;
+            Debug.Log("Goal is now open!");
+            Debug.Log("Go find the red cylinder to finish the maze!");
+        }
+    }
+
+    public void SetEndCylinder(GameObject endCylinder)
+    {
+        this.endCylinder = endCylinder;
+
+        if (endCylinder == null)
+        {
+            Debug.LogError("End cylinder not found!");
         }
     }
 }

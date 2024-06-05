@@ -13,6 +13,7 @@ public class WallGenerator
     private HashSet<Vector3> createdVertices;
     private bool redCylinderCreated = false;
     private Dictionary<Vector3, Vector3> vertexToNormal = new();
+    private GameObject endCylinder = null;
 
     public void Generate(GameObject obj)
     {
@@ -55,6 +56,57 @@ public class WallGenerator
 
         Debug.Log("Wall generation completed!");
         Debug.Log("Left vertices: " + (vertices.Length - createdVertices.Count));
+    }
+
+    public void CreateCollectable(int numCollectables, GameObject collectablePrefab)
+    {
+        Vector3[] notOccupiedVertices = GetNotOccupiedVertices();
+        if (notOccupiedVertices.Length < numCollectables)
+        {
+            numCollectables = notOccupiedVertices.Length;
+            Debug.LogWarning("Number of collectables is greater than the number of not occupied vertices.\n" +
+                             "Number of collectables is set to " + numCollectables);
+        }
+
+        HashSet<Vector3> occupiedVertices = new();
+
+        while (occupiedVertices.Count < numCollectables)
+        {
+            Vector3 vertex = notOccupiedVertices[UnityEngine.Random.Range(0, notOccupiedVertices.Length)];
+            if (occupiedVertices.Contains(vertex))
+                continue;
+
+            Vector3 normal = vertexToNormal[vertex];
+            vertex += normal.normalized * 0.14f;
+            GameObject collectable = GameObject.Instantiate(collectablePrefab);
+            collectable.transform.position = vertex;
+            collectable.transform.rotation = Quaternion.LookRotation(normal);
+            collectable.transform.Rotate(45, 45, 45);
+            collectable.transform.parent = BaseObj.transform;
+
+            // Store the normal values in the collectable object
+            CollectableMotion collectableMotion = collectable.GetComponent<CollectableMotion>();
+            collectableMotion.SetNormal(normal);
+
+            occupiedVertices.Add(vertex);
+        }
+    }
+
+    public GameObject GetEndCylinder()
+    {
+        return endCylinder;
+    }
+
+    private Vector3[] GetNotOccupiedVertices()
+    {
+        List<Vector3> notOccupiedVertices = new();
+        foreach (Vector3 vertex in vertices)
+        {
+            if (!createdVertices.Contains(vertex))
+                notOccupiedVertices.Add(vertex);
+        }
+
+        return notOccupiedVertices.ToArray();
     }
 
     private void GenerateWallsFromPairs()
@@ -106,9 +158,9 @@ public class WallGenerator
             {
                 cylinder.transform.localScale = new Vector3(0.2f, 0.27f, 0.2f);
                 cylinder.transform.parent = BaseObj.transform;
-                cylinder.GetComponent<Renderer>().material.color = Color.red;
                 cylinder.tag = "RedCylinder";
                 redCylinderCreated = true;
+                endCylinder = cylinder;
             }
             else
             {

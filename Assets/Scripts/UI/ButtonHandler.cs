@@ -13,6 +13,7 @@ public class ButtonHandler : MonoBehaviour
     public GameObject ellipsoidePrefab;
     public GameObject cubePrefab;
     public GameObject ballPrefab;
+    public GameObject CollectablePrefab;
     public Canvas canvas;
     private Timer timer; // Reference to the Timer script
     private Vector3 initPos = new Vector3(0, 1, 0);
@@ -43,12 +44,17 @@ public class ButtonHandler : MonoBehaviour
         // Generate walls
         WallGenerator wallGenerator = new();
         wallGenerator.Generate(BaseObj);
+        wallGenerator.CreateCollectable(3, CollectablePrefab);
 
         // Generate a transparent shell around the sphere
         HollowSphere hollowSphere = new();
         MeshFilter meshFilter = GetComponent<MeshFilter>();
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
         hollowSphere.GenerateHollowSphere(BaseObj, meshFilter, meshRenderer);
+
+        GameObject ball = GameObject.Find("Ball(Clone)");
+        CollisionHandler collisionHandler = ball.GetComponent<CollisionHandler>();
+        collisionHandler.SetEndCylinder(wallGenerator.GetEndCylinder());
     }
 
     public void OnCubeButtonPressed()
@@ -65,6 +71,7 @@ public class ButtonHandler : MonoBehaviour
         // Generate walls
         WallGenerator wallGenerator = new();
         wallGenerator.Generate(BaseObj);
+        wallGenerator.CreateCollectable(3, CollectablePrefab);
 
         // Generate a transparent shell around the Cube
         HollowCube hollowCube = new();
@@ -74,8 +81,10 @@ public class ButtonHandler : MonoBehaviour
 
         Instantiate(ballPrefab, new Vector3(0.125f, 2.15f, 0.125f), Quaternion.identity, BaseObj.transform); // ball on the top of sphere
         GameObject ball = GameObject.Find("Ball(Clone)");
-        // Scale the ball
         ball.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+
+        CollisionHandler collisionHandler = ball.GetComponent<CollisionHandler>();
+        collisionHandler.SetEndCylinder(wallGenerator.GetEndCylinder());
     }
 
     private void ToggleCanvasComponents()
