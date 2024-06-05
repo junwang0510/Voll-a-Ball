@@ -91,6 +91,7 @@ public class ButtonHandler : MonoBehaviour
     {
         foreach (Transform child in canvas.transform)
         {
+            if (child.gameObject.name == "BackButton") continue;
             child.gameObject.SetActive(!child.gameObject.activeSelf);
         }
     }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Rotator : MonoBehaviour
 {
-    private readonly float rotationSpeed = 0.2f;
+    private readonly float rotationSpeed = 0.6f;
     private float yaw = 90.0f; // Horizontal rotation
     private float pitch = 70.0f; // Vertical rotation
     public readonly Vector2 pitchLimits = new(-89, 89);
