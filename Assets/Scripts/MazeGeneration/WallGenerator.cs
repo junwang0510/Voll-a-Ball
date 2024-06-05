@@ -156,7 +156,8 @@ public class WallGenerator
             // Randomly set one and only one cylinder to red (rest = black)
             if (!redCylinderCreated && UnityEngine.Random.Range(0, 10) == 0)
             {
-                cylinder.transform.localScale = new Vector3(0.2f, 0.27f, 0.2f);
+                cylinder.transform.localScale = new Vector3(0.14f, 0.27f, 0.14f);
+                cylinder.GetComponent<Renderer>().material = material;
                 cylinder.transform.parent = BaseObj.transform;
                 cylinder.tag = "RedCylinder";
                 redCylinderCreated = true;

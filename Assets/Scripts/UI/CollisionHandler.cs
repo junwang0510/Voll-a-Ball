@@ -45,6 +45,10 @@ public class CollisionHandler : MonoBehaviour
         if (collected == NUM_COLLECTABLES)
         {
             endCylinder.GetComponent<Renderer>().material.color = Color.red;
+            Vector3 originalScale = endCylinder.transform.localScale;
+            originalScale.x *= (10.0f / 7.0f);
+            originalScale.z *= (10.0f / 7.0f);
+            endCylinder.transform.localScale = originalScale;
             Debug.Log("Goal is now open!");
             Debug.Log("Go find the red cylinder to finish the maze!");
         }
